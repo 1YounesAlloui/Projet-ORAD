@@ -7,7 +7,7 @@ from .models import User, Patient
 from doctors.models import Doctor
 from appointments.models import Appointment
 from core.permissions import IsAdminUser
-from .serializers import UserSerializer, RegisterSerializer, AdminUserUpdateSerializer
+from .serializers import UserSerializer, RegisterSerializer, AdminUserUpdateSerializer, UserProfileUpdateSerializer
 
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
@@ -57,6 +57,19 @@ class CurrentUserView(APIView):
             data = dict(data)
             data['role'] = 'ADMIN'
         return Response(data)
+
+    def patch(self, request):
+        serializer = UserProfileUpdateSerializer(
+            request.user, 
+            data=request.data, 
+            partial=True, 
+            context={'request': request}
+        )
+        if serializer.is_valid():
+            user = serializer.save()
+            user_data = UserSerializer(user).data
+            return Response(user_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
