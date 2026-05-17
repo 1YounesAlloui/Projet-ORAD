@@ -382,6 +382,61 @@ const DoctorMyProfile = () => {
 
                         {editingProfile ? (
                             <form onSubmit={handleProfileSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">First Name</label>
+                                    <input
+                                        type="text" required
+                                        value={profileForm.first_name}
+                                        onChange={e => setProfileForm(p => ({ ...p, first_name: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                                    <input
+                                        type="text" required
+                                        value={profileForm.last_name}
+                                        onChange={e => setProfileForm(p => ({ ...p, last_name: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                                    <input
+                                        type="email" required
+                                        value={profileForm.email}
+                                        onChange={e => setProfileForm(p => ({ ...p, email: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                                    <input
+                                        type="text" required
+                                        value={profileForm.phone_number}
+                                        onChange={e => setProfileForm(p => ({ ...p, phone_number: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">password</label>
+                                    <input
+                                        type="password" minLength="8" maxLength="100" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number" required
+                                        value={profileForm.password}
+                                        onChange={e => setProfileForm(p => ({ ...p, password: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                    <input
+                                        type="password" minLength="8" maxLength="100" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number" required
+                                        value={profileForm.confirm_password}
+                                        onChange={e => setProfileForm(p => ({ ...p, confirm_password: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Specialty</label>
                                     <input
