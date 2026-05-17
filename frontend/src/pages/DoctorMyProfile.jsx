@@ -29,7 +29,10 @@ const DoctorMyProfile = () => {
         email: user?.email || '',
         phone_number: user?.phone_number || '',
         password: '',
-        password_confirm: ''
+        password_confirm: '',
+        date_of_birth: user?.patient_profile?.date_of_birth || '',
+        address: user?.patient_profile?.address || '',
+        medical_history: user?.patient_profile?.medical_history || ''
     });
 
     useEffect(() => {
@@ -41,7 +44,10 @@ const DoctorMyProfile = () => {
                 email: user.email || '',
                 phone_number: user.phone_number || '',
                 password: '',
-                password_confirm: ''
+                password_confirm: '',
+                date_of_birth: user.patient_profile?.date_of_birth || '',
+                address: user.patient_profile?.address || '',
+                medical_history: user.patient_profile?.medical_history || ''
             });
         }
     }, [user]);
@@ -109,6 +115,13 @@ const DoctorMyProfile = () => {
             if (!payload.password) {
                 delete payload.password;
                 delete payload.password_confirm;
+            }
+
+            // Clean up empty Patient fields if they are sent for a non-patient
+            if (user?.role !== 'PATIENT') {
+                delete payload.date_of_birth;
+                delete payload.address;
+                delete payload.medical_history;
             }
 
             const res = await api.patch('me/', payload);
@@ -192,7 +205,7 @@ const DoctorMyProfile = () => {
                         {editingUser ? (
                             <><X className="h-4 w-4 mr-2" /> Cancel</>
                         ) : (
-                            <><Edit2 className="h-4 w-4 mr-2" /> Edit Account</>
+                            <><Edit2 className="h-4 w-4 mr-2" /> Edit Profile</>
                         )}
                     </button>
                 </div>
@@ -244,6 +257,40 @@ const DoctorMyProfile = () => {
                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
                             />
                         </div>
+
+                        {/* Patient-specific fields */}
+                        {user?.role === 'PATIENT' && (
+                            <>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                                    <input
+                                        type="date"
+                                        value={userForm.date_of_birth}
+                                        onChange={e => setUserForm(p => ({ ...p, date_of_birth: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Address</label>
+                                    <input
+                                        type="text"
+                                        value={userForm.address}
+                                        onChange={e => setUserForm(p => ({ ...p, address: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700">Medical History</label>
+                                    <textarea
+                                        rows="3"
+                                        value={userForm.medical_history}
+                                        onChange={e => setUserForm(p => ({ ...p, medical_history: e.target.value }))}
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
+                                    />
+                                </div>
+                            </>
+                        )}
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700">New Password (leave blank to keep current)</label>
                             <input
@@ -267,12 +314,20 @@ const DoctorMyProfile = () => {
                                 type="submit"
                                 className="flex items-center px-5 py-2 bg-medical-blue text-white text-sm font-medium rounded-lg hover:bg-sky-600 transition-colors"
                             >
-                                <Save className="h-4 w-4 mr-2" /> Save Account Details
+                                <Save className="h-4 w-4 mr-2" /> Save Changes
                             </button>
                         </div>
                     </form>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="bg-slate-50 rounded-lg p-4">
+                            <p className="text-gray-500 mb-1">First Name</p>
+                            <p className="font-semibold text-gray-900">{user?.first_name || 'N/A'}</p>
+                        </div>
+                        <div className="bg-slate-50 rounded-lg p-4">
+                            <p className="text-gray-500 mb-1">Last Name</p>
+                            <p className="font-semibold text-gray-900">{user?.last_name || 'N/A'}</p>
+                        </div>
                         <div className="bg-slate-50 rounded-lg p-4">
                             <p className="text-gray-500 mb-1">Username</p>
                             <p className="font-semibold text-gray-900">{user?.username}</p>
@@ -285,6 +340,24 @@ const DoctorMyProfile = () => {
                             <p className="text-gray-500 mb-1">Phone Number</p>
                             <p className="font-semibold text-gray-900">{user?.phone_number || 'N/A'}</p>
                         </div>
+
+                        {/* Patient-specific details */}
+                        {user?.role === 'PATIENT' && (
+                            <>
+                                <div className="bg-slate-50 rounded-lg p-4">
+                                    <p className="text-gray-500 mb-1">Date of Birth</p>
+                                    <p className="font-semibold text-gray-900">{user?.patient_profile?.date_of_birth || 'N/A'}</p>
+                                </div>
+                                <div className="bg-slate-50 rounded-lg p-4">
+                                    <p className="text-gray-500 mb-1">Address</p>
+                                    <p className="font-semibold text-gray-900">{user?.patient_profile?.address || 'N/A'}</p>
+                                </div>
+                                <div className="bg-slate-50 rounded-lg p-4 md:col-span-2">
+                                    <p className="text-gray-500 mb-1">Medical History</p>
+                                    <p className="font-semibold text-gray-700 whitespace-pre-line">{user?.patient_profile?.medical_history || 'No medical history recorded.'}</p>
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
             </div>

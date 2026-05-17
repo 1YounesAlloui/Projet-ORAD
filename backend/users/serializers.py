@@ -1,18 +1,32 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Patient
 from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.ModelSerializer):
+    patient_profile = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'role', 'phone_number', 'is_active')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'role', 'phone_number', 'is_active', 'patient_profile')
+
+    def get_patient_profile(self, obj):
+        if obj.role == 'PATIENT':
+            try:
+                profile = obj.patient_profile
+                return {
+                    'date_of_birth': profile.date_of_birth,
+                    'address': profile.address,
+                    'medical_history': profile.medical_history
+                }
+            except Exception:
+                return None
+        return None
 
 
 class AdminUserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'role', 'phone_number', 'is_active')
-
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -49,7 +63,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         # Create corresponding profile
         if role == 'PATIENT':
-            from .models import Patient
             Patient.objects.create(user=user)
         elif role == 'DOCTOR':
             from doctors.models import Doctor
@@ -63,9 +76,14 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(write_only=True, required=False, allow_blank=True)
     email = serializers.EmailField(required=True)
 
+    # Patient fields
+    date_of_birth = serializers.DateField(required=False, write_only=True, allow_null=True)
+    address = serializers.CharField(required=False, write_only=True, allow_blank=True)
+    medical_history = serializers.CharField(required=False, write_only=True, allow_blank=True)
+
     class Meta:
         model = User
-        fields = ('username', 'password', 'password_confirm', 'email', 'first_name', 'last_name', 'phone_number')
+        fields = ('username', 'password', 'password_confirm', 'email', 'first_name', 'last_name', 'phone_number', 'date_of_birth', 'address', 'medical_history')
 
     def validate_email(self, value):
         user = self.context['request'].user
@@ -91,6 +109,11 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', None)
         validated_data.pop('password_confirm', None)
         
+        # Extract patient fields
+        date_of_birth = validated_data.pop('date_of_birth', None)
+        address = validated_data.pop('address', None)
+        medical_history = validated_data.pop('medical_history', None)
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
             
@@ -98,4 +121,16 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             instance.set_password(password)
             
         instance.save()
+        
+        # If the user is a Patient, update/create their Patient profile
+        if instance.role == 'PATIENT':
+            patient_profile, created = Patient.objects.get_or_create(user=instance)
+            if date_of_birth is not None:
+                patient_profile.date_of_birth = date_of_birth
+            if address is not None:
+                patient_profile.address = address
+            if medical_history is not None:
+                patient_profile.medical_history = medical_history
+            patient_profile.save()
+            
         return instance
