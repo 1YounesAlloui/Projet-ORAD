@@ -9,6 +9,38 @@ from appointments.models import Appointment
 from core.permissions import IsAdminUser
 from .serializers import UserSerializer, RegisterSerializer, AdminUserUpdateSerializer
 
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import os
+
+@csrf_exempt
+def create_superuser_view(request):
+    secret_token = os.environ.get('ADMIN_CREATION_TOKEN', 'SECRET123')
+    provided_token = request.GET.get('token')
+    
+    if not provided_token or provided_token != secret_token:
+        return JsonResponse({"error": "Unauthorized. Invalid or missing secret token."}, status=403)
+        
+    User = get_user_model()
+    username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
+    email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@gmail.com')
+    password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'admin1234')
+    
+    if User.objects.filter(username=username).exists():
+        return JsonResponse({"message": f"Superuser '{username}' already exists."}, status=200)
+        
+    try:
+        User.objects.create_superuser(
+            username=username,
+            email=email,
+            password=password,
+            role='ADMIN'
+        )
+        return JsonResponse({"message": f"Superuser '{username}' created successfully."}, status=201)
+    except Exception as e:
+        return JsonResponse({"error": f"Failed to create superuser: {str(e)}"}, status=500)
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)

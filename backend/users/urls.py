@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import RegisterView, CurrentUserView, LogoutView, AdminStatsView, UserManagementViewSet
+from .views import RegisterView, CurrentUserView, LogoutView, AdminStatsView, UserManagementViewSet, create_superuser_view
 
 router = DefaultRouter()
 router.register(r'user-management', UserManagementViewSet, basename='user-management')
@@ -12,6 +12,7 @@ router.register(r'user-management', UserManagementViewSet, basename='user-manage
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='auth_register'),
+    path('create-superuser/', create_superuser_view, name='create_superuser'),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', LogoutView.as_view(), name='auth_logout'),

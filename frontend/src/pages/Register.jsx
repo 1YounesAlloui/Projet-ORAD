@@ -22,11 +22,20 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
             await api.post('register/', formData);
             navigate('/login');
         } catch (err) {
-            setError(err.response?.data?.password?.[0] || err.response?.data?.username?.[0] || 'Registration failed');
+            const data = err.response?.data;
+            if (data) {
+                const messages = Object.entries(data)
+                    .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(' ') : val}`)
+                    .join(' | ');
+                setError(messages || 'Registration failed');
+            } else {
+                setError('Registration failed: Network or server error.');
+            }
         }
     };
 
@@ -71,7 +80,6 @@ const Register = () => {
                             <label className="block text-sm font-medium text-gray-700">Role</label>
                             <select name="role" value={formData.role} onChange={handleChange} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-medical-blue focus:border-medical-blue sm:text-sm rounded-md">
                                 <option value="PATIENT">Patient</option>
-                                <option value="DOCTOR">Doctor</option>
                             </select>
                         </div>
 

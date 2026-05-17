@@ -155,13 +155,15 @@ STORAGES = {
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
 
-# CORS
+# CORS & CSRF Settings
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
 CORS_ALLOW_CREDENTIALS = True
 
 # Also fallback to allow all origins in development if not specified
 if DEBUG and not os.environ.get('CORS_ALLOWED_ORIGINS'):
     CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173,https://*.onrender.com').split(',')
 
 # REST Framework
 REST_FRAMEWORK = {
