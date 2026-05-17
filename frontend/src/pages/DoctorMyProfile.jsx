@@ -18,6 +18,12 @@ const DoctorMyProfile = () => {
         experience_years: 0,
         consultation_fee: 0,
         bio: '',
+        first_name: user?.first_name || '',
+        last_name: user?.last_name || '',
+        email: user?.email || '',
+        phone_number: user?.phone_number || '',
+        password: '',
+        confirm_password: ''
     });
 
     // ── User account state ───────────────────────────────────────────
@@ -49,6 +55,13 @@ const DoctorMyProfile = () => {
                 address: user.patient_profile?.address || '',
                 medical_history: user.patient_profile?.medical_history || ''
             });
+            setProfileForm(pf => ({
+                ...pf,
+                first_name: user.first_name || '',
+                last_name: user.last_name || '',
+                email: user.email || '',
+                phone_number: user.phone_number || '',
+            }));
         }
     }, [user]);
 
@@ -73,6 +86,12 @@ const DoctorMyProfile = () => {
                     experience_years: mine.experience_years,
                     consultation_fee: mine.consultation_fee,
                     bio: mine.bio,
+                    first_name: user?.first_name || '',
+                    last_name: user?.last_name || '',
+                    email: user?.email || '',
+                    phone_number: user?.phone_number || '',
+                    password: '',
+                    confirm_password: ''
                 });
                 setAvailabilities(mine.availabilities);
             }
@@ -92,13 +111,49 @@ const DoctorMyProfile = () => {
     // ── Profile update ────────────────────────────────────────────
     const handleProfileSave = async (e) => {
         e.preventDefault();
+        if (profileForm.password && profileForm.password !== profileForm.confirm_password) {
+            toast.error("Passwords do not match");
+            return;
+        }
+
         try {
-            await api.patch(`doctors/${doctor.id}/`, profileForm);
+            // 1. Update Core User Details
+            const userPayload = {
+                first_name: profileForm.first_name,
+                last_name: profileForm.last_name,
+                email: profileForm.email,
+                phone_number: profileForm.phone_number,
+                username: user?.username,
+            };
+            if (profileForm.password) {
+                userPayload.password = profileForm.password;
+                userPayload.password_confirm = profileForm.confirm_password;
+            }
+            const userRes = await api.patch('me/', userPayload);
+            setUser(userRes.data);
+
+            // 2. Update Doctor Clinical Details
+            const doctorPayload = {
+                specialty: profileForm.specialty,
+                experience_years: profileForm.experience_years,
+                consultation_fee: profileForm.consultation_fee,
+                bio: profileForm.bio,
+            };
+            await api.patch(`doctors/${doctor.id}/`, doctorPayload);
+
             toast.success('Clinical profile updated!');
             setEditingProfile(false);
             fetchDoctor();
         } catch (err) {
-            toast.error('Failed to update clinical profile');
+            const data = err.response?.data;
+            if (data) {
+                const messages = Object.entries(data)
+                    .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(' ') : val}`)
+                    .join(' | ');
+                toast.error(messages);
+            } else {
+                toast.error('Failed to update profile details');
+            }
         }
     };
 
@@ -382,7 +437,6 @@ const DoctorMyProfile = () => {
 
                         {editingProfile ? (
                             <form onSubmit={handleProfileSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">First Name</label>
                                     <input
@@ -420,23 +474,26 @@ const DoctorMyProfile = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">password</label>
+                                    <label className="block text-sm font-medium text-gray-700">Password</label>
                                     <input
-                                        type="password" minLength="8" maxLength="100" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number" required
+                                        type="password"
                                         value={profileForm.password}
                                         onChange={e => setProfileForm(p => ({ ...p, password: e.target.value }))}
+                                        placeholder="Leave blank to keep current"
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
                                     <input
-                                        type="password" minLength="8" maxLength="100" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number" required
+                                        type="password"
                                         value={profileForm.confirm_password}
                                         onChange={e => setProfileForm(p => ({ ...p, confirm_password: e.target.value }))}
+                                        placeholder="Confirm new password"
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-medical-blue focus:border-medical-blue sm:text-sm"
                                     />
                                 </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Specialty</label>
                                     <input
