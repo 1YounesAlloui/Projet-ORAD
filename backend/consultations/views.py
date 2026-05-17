@@ -1,8 +1,11 @@
 from rest_framework import viewsets, permissions
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import action
+from django.http import HttpResponse
 from .models import Consultation
 from .serializers import ConsultationSerializer
 from core.permissions import IsDoctorOrAdmin
+from .pdf_generator import generate_consultation_pdf
 
 class ConsultationViewSet(viewsets.ModelViewSet):
     serializer_class = ConsultationSerializer
@@ -44,3 +47,13 @@ class ConsultationViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("You can only create consultations for your own appointments.")
 
         serializer.save(patient=patient, doctor=doctor)
+
+    @action(detail=True, methods=['get'], url_path='export-pdf')
+    def export_pdf(self, request, pk=None):
+        consultation = self.get_object()
+        pdf_data = generate_consultation_pdf(consultation)
+        
+        filename = f"ordonnance_{consultation.id}.pdf"
+        response = HttpResponse(pdf_data, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response

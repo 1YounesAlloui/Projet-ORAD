@@ -181,7 +181,7 @@ const DoctorProfile = () => {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-slate-500 font-medium">Consultation Fee</span>
-                                <span className="font-bold text-slate-900">${doctor.consultation_fee}</span>
+                                <span className="font-bold text-slate-900">{doctor.consultation_fee} DA</span>
                             </div>
                             {doctor.bio && (
                                 <div className="pt-2">

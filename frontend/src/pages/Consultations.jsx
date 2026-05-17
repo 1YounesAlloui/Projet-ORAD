@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { FileText, Search, Calendar, User, UserCheck, Stethoscope, Eye, X, BookOpen, Clock, Activity, Edit } from 'lucide-react';
+import { FileText, Search, Calendar, User, UserCheck, Stethoscope, Eye, X, BookOpen, Clock, Activity, Edit, FileDown } from 'lucide-react';
 import ConsultationForm from '../components/ConsultationForm';
 
 const Consultations = () => {
@@ -21,6 +21,24 @@ const Consultations = () => {
             toast.error("Failed to fetch consultations");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleExportPDF = async (consultationId) => {
+        const loadToast = toast.loading("Generating professional PDF...");
+        try {
+            const response = await api.get(`consultations/${consultationId}/export-pdf/`, {
+                responseType: 'blob'
+            });
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `ordonnance_${consultationId}.pdf`;
+            link.click();
+            toast.success("PDF exported successfully!", { id: loadToast });
+        } catch (error) {
+            console.error("Error exporting PDF", error);
+            toast.error("Failed to export PDF", { id: loadToast });
         }
     };
 
@@ -240,12 +258,20 @@ const Consultations = () => {
                                     <Edit className="h-4 w-4 mr-1.5" /> Edit Consultation
                                 </button>
                             ) : <div></div>}
-                            <button
-                                onClick={() => setSelectedConsultation(null)}
-                                className="px-5 py-2 rounded-xl bg-slate-800 text-white text-sm font-semibold hover:bg-slate-900 transition-colors"
-                            >
-                                Close
-                            </button>
+                            <div className="flex items-center space-x-3">
+                                <button
+                                    onClick={() => handleExportPDF(selectedConsultation.id)}
+                                    className="px-5 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors flex items-center shadow-sm"
+                                >
+                                    <FileDown className="h-4 w-4 mr-1.5" /> Export PDF
+                                </button>
+                                <button
+                                    onClick={() => setSelectedConsultation(null)}
+                                    className="px-5 py-2 rounded-xl bg-slate-800 text-white text-sm font-semibold hover:bg-slate-900 transition-colors"
+                                >
+                                    Close
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

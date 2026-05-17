@@ -524,7 +524,7 @@ const DoctorMyProfile = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Consultation Fee ($)</label>
+                                    <label className="block text-sm font-medium text-gray-700">Consultation Fee (DA)</label>
                                     <input
                                         type="number" min="0" step="0.01" required
                                         value={profileForm.consultation_fee}
@@ -558,7 +558,7 @@ const DoctorMyProfile = () => {
                                 </div>
                                 <div className="bg-slate-50 rounded-lg p-4">
                                     <p className="text-gray-500 mb-1">Consultation Fee</p>
-                                    <p className="font-semibold text-gray-900">${doctor.consultation_fee}</p>
+                                    <p className="font-semibold text-gray-900">{doctor.consultation_fee} DA</p>
                                 </div>
                                 <div className="bg-slate-50 rounded-lg p-4">
                                     <p className="text-gray-500 mb-1">Specialty</p>

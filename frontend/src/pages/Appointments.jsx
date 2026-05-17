@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
-import { Calendar, Clock, User as UserIcon, CheckCircle, XCircle, FileText, PlusCircle, Eye, Activity, BookOpen, X, Edit } from 'lucide-react';
+import { Calendar, Clock, User as UserIcon, CheckCircle, XCircle, FileText, PlusCircle, Eye, Activity, BookOpen, X, Edit, FileDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ConsultationForm from '../components/ConsultationForm';
 
@@ -27,6 +27,24 @@ const Appointments = () => {
             console.error("Error fetching appointments", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleExportPDF = async (consultationId) => {
+        const loadToast = toast.loading("Generating professional PDF...");
+        try {
+            const response = await api.get(`consultations/${consultationId}/export-pdf/`, {
+                responseType: 'blob'
+            });
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `ordonnance_${consultationId}.pdf`;
+            link.click();
+            toast.success("PDF exported successfully!", { id: loadToast });
+        } catch (error) {
+            console.error("Error exporting PDF", error);
+            toast.error("Failed to export PDF", { id: loadToast });
         }
     };
 
@@ -290,7 +308,13 @@ const Appointments = () => {
                                 )}
                             </div>
                         </div>
-                        <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end">
+                        <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end space-x-3">
+                            <button
+                                onClick={() => handleExportPDF(viewingConsultation.id)}
+                                className="px-5 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors flex items-center shadow-sm"
+                            >
+                                <FileDown className="h-4 w-4 mr-1.5" /> Export PDF
+                            </button>
                             <button onClick={() => setViewingConsultation(null)} className="px-5 py-2 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-900 transition-colors">Close</button>
                         </div>
                     </div>

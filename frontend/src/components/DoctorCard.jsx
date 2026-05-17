@@ -23,7 +23,7 @@ const DoctorCard = ({ doctor }) => {
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                         <span className="font-semibold text-gray-700 mr-2">Fee:</span> 
-                        ${doctor.consultation_fee}
+                        {doctor.consultation_fee} DA
                     </div>
                 </div>
                 
