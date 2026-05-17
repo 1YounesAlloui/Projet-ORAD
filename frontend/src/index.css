@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  --color-medical-blue: #0ea5e9;
+  --color-medical-dark: #0f172a;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+}
