@@ -11,7 +11,7 @@ const DoctorCard = ({ doctor }) => {
                         <UserIcon size={32} />
                     </div>
                     <div className="ml-4">
-                        <h2 className="text-xl font-semibold text-gray-900">Dr. {doctor.user.last_name}</h2>
+                        <h2 className="text-xl font-semibold text-gray-900">{doctor.full_name || `Dr. ${doctor.user.first_name || ''} ${doctor.user.last_name || ''}`}</h2>
                         <p className="text-sm text-medical-blue font-medium">{doctor.specialty}</p>
                     </div>
                 </div>

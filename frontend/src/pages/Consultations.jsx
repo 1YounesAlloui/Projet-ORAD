@@ -31,7 +31,7 @@ const Consultations = () => {
     const filteredConsultations = consultations.filter(item => {
         const patientName = `${item.patient_details?.user?.first_name || ''} ${item.patient_details?.user?.last_name || ''}`.toLowerCase();
         const patientFormName = `${item.appointment_details?.patient_nom || ''} ${item.appointment_details?.patient_prenom || ''}`.toLowerCase();
-        const doctorName = `Dr. ${item.doctor_details?.user?.last_name || ''}`.toLowerCase();
+        const doctorName = (item.doctor_details?.full_name || `Dr. ${item.doctor_details?.user?.first_name || ''} ${item.doctor_details?.user?.last_name || ''}`).toLowerCase();
         const diagnosis = item.diagnosis.toLowerCase();
         const search = searchTerm.toLowerCase();
 
@@ -118,7 +118,7 @@ const Consultations = () => {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">
                                                 <div className="flex items-center space-x-2">
                                                     <Stethoscope className="h-4 w-4 text-medical-blue" />
-                                                    <span>Dr. {item.doctor_details?.user?.last_name || 'Unknown'}</span>
+                                                     <span>{item.doctor_details?.full_name || `Dr. ${item.doctor_details?.user?.first_name || ''} ${item.doctor_details?.user?.last_name || ''}`}</span>
                                                 </div>
                                             </td>
                                         )}
@@ -185,7 +185,7 @@ const Consultations = () => {
                                     <span className="text-slate-500 font-semibold uppercase text-xs block">Doctor</span>
                                     <span className="text-slate-900 font-bold text-base flex items-center">
                                         <Stethoscope className="h-4 w-4 mr-1 text-medical-blue" />
-                                        Dr. {selectedConsultation.doctor_details?.user?.first_name} {selectedConsultation.doctor_details?.user?.last_name}
+                                         {selectedConsultation.doctor_details?.full_name || `Dr. ${selectedConsultation.doctor_details?.user?.first_name || ''} ${selectedConsultation.doctor_details?.user?.last_name || ''}`}
                                     </span>
                                     <span className="text-xs text-medical-blue font-semibold">{selectedConsultation.doctor_details?.specialty}</span>
                                 </div>

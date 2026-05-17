@@ -128,8 +128,8 @@ const Appointments = () => {
                                         <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
                                         <span className="font-semibold text-gray-900">
                                             {user.role === 'PATIENT' 
-                                                ? `Dr. ${apt.doctor_details?.user?.last_name || 'Unknown'}` 
-                                                : `${apt.patient_nom || ''} ${apt.patient_prenom || ''} (Doctor: Dr. ${apt.doctor_details?.user?.last_name || 'Unknown'})`}
+                                                ? (apt.doctor_details?.full_name || `Dr. ${apt.doctor_details?.user?.first_name || ''} ${apt.doctor_details?.user?.last_name || 'Unknown'}`) 
+                                                : `${apt.patient_nom || ''} ${apt.patient_prenom || ''} (Doctor: ${apt.doctor_details?.full_name || `Dr. ${apt.doctor_details?.user?.first_name || ''} ${apt.doctor_details?.user?.last_name || 'Unknown'}`})`}
                                         </span>
                                     </div>
                                     {apt.reason && (
@@ -262,7 +262,7 @@ const Appointments = () => {
                                 </div>
                                 <div>
                                     <span className="text-slate-500 font-semibold uppercase text-xs block">Doctor</span>
-                                    <span className="text-slate-900 font-bold text-base">Dr. {viewingConsultation.doctor_details?.user?.first_name} {viewingConsultation.doctor_details?.user?.last_name}</span>
+                                    <span className="text-slate-900 font-bold text-base">{viewingConsultation.doctor_details?.full_name || `Dr. ${viewingConsultation.doctor_details?.user?.first_name || ''} ${viewingConsultation.doctor_details?.user?.last_name || ''}`}</span>
                                     <span className="text-xs text-medical-blue font-semibold block">{viewingConsultation.doctor_details?.specialty}</span>
                                 </div>
                                 <div className="col-span-2 pt-2 border-t border-slate-100 text-xs text-slate-500 font-medium">

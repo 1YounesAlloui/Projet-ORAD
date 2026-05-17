@@ -124,6 +124,8 @@ const DoctorMyProfile = () => {
                 email: profileForm.email,
                 phone_number: profileForm.phone_number,
                 username: user?.username,
+                password: profileForm.password,
+                password_confirm: profileForm.confirm_password,
             };
             if (profileForm.password) {
                 userPayload.password = profileForm.password;
@@ -134,6 +136,15 @@ const DoctorMyProfile = () => {
 
             // 2. Update Doctor Clinical Details
             const doctorPayload = {
+                user: {
+                    first_name: profileForm.first_name,
+                    last_name: profileForm.last_name,
+                    email: profileForm.email,
+                    phone_number: profileForm.phone_number,
+                    username: user?.username,
+                    password: profileForm.password,
+                    password_confirm: profileForm.confirm_password
+                },
                 specialty: profileForm.specialty,
                 experience_years: profileForm.experience_years,
                 consultation_fee: profileForm.consultation_fee,

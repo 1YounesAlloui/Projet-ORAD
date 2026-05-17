@@ -4,10 +4,11 @@ from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.ModelSerializer):
     patient_profile = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'role', 'phone_number', 'is_active', 'patient_profile')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'role', 'phone_number', 'is_active', 'patient_profile')
 
     def get_patient_profile(self, obj):
         if obj.role == 'PATIENT':
@@ -21,6 +22,15 @@ class UserSerializer(serializers.ModelSerializer):
             except Exception:
                 return None
         return None
+
+    def get_full_name(self, obj):
+        if obj.first_name and obj.last_name:
+            return f"{obj.first_name} {obj.last_name}"
+        elif obj.first_name:
+            return obj.first_name
+        elif obj.last_name:
+            return obj.last_name
+        return obj.username
 
 
 class AdminUserUpdateSerializer(serializers.ModelSerializer):

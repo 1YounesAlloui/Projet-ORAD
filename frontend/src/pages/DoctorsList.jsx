@@ -25,7 +25,7 @@ const DoctorsList = () => {
     }, []);
 
     const filteredDoctors = doctors.filter(doctor => {
-        const fullName = `Dr. ${doctor.user.last_name}`.toLowerCase();
+        const fullName = (doctor.full_name || `Dr. ${doctor.user.first_name || ''} ${doctor.user.last_name || ''}`).toLowerCase();
         const specialty = doctor.specialty.toLowerCase();
         const search = searchTerm.toLowerCase();
         return fullName.includes(search) || specialty.includes(search);

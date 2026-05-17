@@ -125,3 +125,34 @@ class UserManagementViewSet(viewsets.ModelViewSet):
         elif self.action in ['update', 'partial_update']:
             return AdminUserUpdateSerializer
         return RegisterSerializer
+
+
+class ProfileView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        data = serializer.data
+        # Django superusers default to PATIENT role — override to ADMIN
+        if request.user.is_superuser and data.get('role') != 'ADMIN':
+            data = dict(data)
+            data['role'] = 'ADMIN'
+        return Response(data)
+
+
+class ProfileUpdateView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def put(self, request):
+        serializer = UserProfileUpdateSerializer(
+            request.user, 
+            data=request.data, 
+            partial=True, 
+            context={'request': request}
+        )
+        if serializer.is_valid():
+            user = serializer.save()
+            user_data = UserSerializer(user).data
+            return Response(user_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

@@ -269,7 +269,7 @@ const AssistantDashboard = () => {
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
                                             <p className="font-bold text-slate-900">{apt.patient_nom} {apt.patient_prenom}</p>
-                                            <p className="text-xs text-slate-500 mt-0.5">Assigned to: Dr. {apt.doctor_details?.user?.last_name} ({apt.doctor_details?.specialty})</p>
+                                            <p className="text-xs text-slate-500 mt-0.5">Assigned to: {apt.doctor_details?.full_name || `Dr. ${apt.doctor_details?.user?.first_name || ''} ${apt.doctor_details?.user?.last_name || ''}`} ({apt.doctor_details?.specialty})</p>
                                             {apt.reason && <p className="text-xs text-slate-600 mt-2 bg-white/80 p-2 rounded-lg border border-amber-100/50 italic">"{apt.reason}"</p>}
                                         </div>
                                         <div className="text-right text-xs">
@@ -315,7 +315,7 @@ const AssistantDashboard = () => {
                                 <div key={apt.id} className="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl flex justify-between items-center">
                                     <div>
                                         <p className="font-bold text-slate-900">{apt.patient_nom} {apt.patient_prenom}</p>
-                                        <p className="text-xs text-slate-500 mt-0.5">Doctor: Dr. {apt.doctor_details?.user?.last_name} ({apt.doctor_details?.specialty})</p>
+                                        <p className="text-xs text-slate-500 mt-0.5">Doctor: {apt.doctor_details?.full_name || `Dr. ${apt.doctor_details?.user?.first_name || ''} ${apt.doctor_details?.user?.last_name || ''}`} ({apt.doctor_details?.specialty})</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-xs font-bold text-slate-800">{apt.appointment_date}</p>
@@ -599,7 +599,7 @@ const PatientDashboard = () => {
                                             <Stethoscope className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-slate-900">Dr. {apt.doctor_details?.user?.last_name}</h4>
+                                            <h4 className="font-bold text-slate-900">{apt.doctor_details?.full_name || `Dr. ${apt.doctor_details?.user?.first_name || ''} ${apt.doctor_details?.user?.last_name || ''}`}</h4>
                                             <p className="text-[11px] text-medical-blue font-semibold uppercase">{apt.doctor_details?.specialty}</p>
                                         </div>
                                     </div>
@@ -644,7 +644,7 @@ const PatientDashboard = () => {
                                     <div>
                                         <div className="flex justify-between text-xs text-slate-400 font-semibold mb-1">
                                             <span>Date: {con.consultation_date}</span>
-                                            <span className="text-medical-blue uppercase">Dr. {con.doctor_details?.user?.last_name}</span>
+                                            <span className="text-medical-blue uppercase">{con.doctor_details?.full_name || `Dr. ${con.doctor_details?.user?.first_name || ''} ${con.doctor_details?.user?.last_name || ''}`}</span>
                                         </div>
                                         <p className="font-bold text-slate-900 text-sm truncate">{con.diagnosis}</p>
                                     </div>
@@ -682,7 +682,7 @@ const PatientDashboard = () => {
                                 </div>
                                 <div>
                                     <span className="text-slate-500 font-semibold uppercase text-xs block">Consulting Doctor</span>
-                                    <span className="text-slate-900 font-bold text-base">Dr. {viewingConsultation.doctor_details?.user?.first_name} {viewingConsultation.doctor_details?.user?.last_name}</span>
+                                    <span className="text-slate-900 font-bold text-base">{viewingConsultation.doctor_details?.full_name || `Dr. ${viewingConsultation.doctor_details?.user?.first_name || ''} ${viewingConsultation.doctor_details?.user?.last_name || ''}`}</span>
                                     <span className="text-xs text-medical-blue font-semibold block">{viewingConsultation.doctor_details?.specialty}</span>
                                 </div>
                                 <div className="col-span-2 pt-2 border-t border-slate-100 text-xs text-slate-500 font-medium">

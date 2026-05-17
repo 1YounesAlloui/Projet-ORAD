@@ -171,7 +171,7 @@ const DoctorProfile = () => {
                         <div className="h-24 w-24 rounded-full bg-medical-blue/10 flex items-center justify-center text-medical-blue mb-4">
                             <UserIcon size={48} />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900">Dr. {doctor.user.last_name}</h2>
+                        <h2 className="text-2xl font-bold text-gray-900">{doctor.full_name || `Dr. ${doctor.user.first_name || ''} ${doctor.user.last_name || ''}`}</h2>
                         <p className="text-medical-blue font-semibold mt-1 uppercase text-sm tracking-wider">{doctor.specialty}</p>
                         
                         <div className="w-full mt-6 border-t border-slate-100 pt-6 space-y-4 text-sm">
