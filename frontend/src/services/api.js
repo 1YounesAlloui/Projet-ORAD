@@ -1,7 +1,11 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://medicalbook.onrender.com/api/';
+const localURL = 'http://127.0.0.1:8000/api/';
+const remoteURL = import.meta.env.VITE_API_URL || 'https://medicalbook.onrender.com/api/';
+
+const cachedUseLocal = localStorage.getItem('use_local_backend') === 'true';
+const baseURL = cachedUseLocal ? localURL : remoteURL;
 
 const api = axios.create({
     baseURL,
@@ -9,6 +13,31 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
+
+// Fast non-blocking ping check to auto-detect offline local server availability
+const detectBackend = async () => {
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 600); // Super fast 600ms timeout
+        await fetch('http://127.0.0.1:8000/api/doctors/', { signal: controller.signal, mode: 'no-cors' });
+        clearTimeout(timeoutId);
+        
+        // If succeeded and weren't using it, switch to local
+        if (!cachedUseLocal) {
+            localStorage.setItem('use_local_backend', 'true');
+            api.defaults.baseURL = localURL;
+        }
+    } catch (e) {
+        // If failed and were using it, revert back to remote
+        if (cachedUseLocal) {
+            localStorage.setItem('use_local_backend', 'false');
+            api.defaults.baseURL = remoteURL;
+        }
+    }
+};
+
+// Start background detection without blocking main thread
+detectBackend();
 
 api.interceptors.request.use(
     (config) => {

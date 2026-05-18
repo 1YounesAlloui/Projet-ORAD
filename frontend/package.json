@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "electron:dev": "electron .",
-    "electron:build": "npm run build && electron-packager . MediBook --platform=win32 --arch=x64 --out=dist-desktop --overwrite --ignore=\"^(src|public|dist-desktop|\\.git|vite\\.config\\.js|eslint\\.config\\.js)\""
+    "electron:build": "npm run build && electron-builder --win"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",
@@ -52,18 +52,18 @@
       "preload.js"
     ],
     "win": {
-      "sign": false,
       "target": [
         "nsis"
-      ],
-      "icon": "public/favicon.ico"
+      ]
     },
     "nsis": {
       "oneClick": false,
+      "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
+      "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
-      "shortcutName": "MediBook"
+      "shortcutName": "MediBook",
+      "runAfterFinish": true
     }
   }
 }
