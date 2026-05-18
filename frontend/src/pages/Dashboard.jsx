@@ -584,16 +584,16 @@ const PatientDashboard = () => {
 
     return (
         <div className="space-y-8 animate-fade-in">
-            {/* Vivid Patient Banner card */}
-            <div className="bg-gradient-to-r from-medical-blue to-sky-600 rounded-3xl p-8 text-white shadow-md flex justify-between items-center flex-wrap gap-6 relative overflow-hidden">
-                <div className="absolute right-0 top-0 opacity-10 pointer-events-none transform translate-x-12 -translate-y-12">
+            {/* Elegant Minimal Patient Banner card */}
+            <div className="bg-blue-50/70 border border-blue-100 rounded-3xl p-8 text-slate-800 flex justify-between items-center flex-wrap gap-6 relative overflow-hidden">
+                <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-12 -translate-y-12 text-medical-blue">
                     <Clipboard size={220} />
                 </div>
-                <div className="space-y-2.5 z-10 relative">
-                    <h2 className="text-2xl font-bold">Need specialist medical care?</h2>
-                    <p className="opacity-90 max-w-md text-sm leading-relaxed">Search through our verified specialist doctors directory, choose a day, and secure your schedule immediately.</p>
+                <div className="space-y-2 z-10 relative">
+                    <h2 className="text-2xl font-black text-slate-900">Need specialist medical care?</h2>
+                    <p className="text-slate-500 max-w-md text-sm leading-relaxed">Search through our verified specialist doctors directory, choose a day, and secure your schedule immediately.</p>
                 </div>
-                <Link to="/doctors" className="bg-white text-medical-blue font-bold py-3.5 px-7 rounded-xl shadow-md hover:bg-slate-50 hover:-translate-y-0.5 transition-all text-sm z-10 relative">
+                <Link to="/doctors" className="bg-medical-blue text-white font-bold py-3 px-6 rounded-xl hover:bg-sky-600 transition-all text-sm z-10 relative shadow-sm shadow-sky-100">
                     Find Doctors
                 </Link>
             </div>

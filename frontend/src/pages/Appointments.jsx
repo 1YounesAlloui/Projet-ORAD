@@ -80,10 +80,10 @@ const Appointments = () => {
 
     const getStatusBadge = (status) => {
         switch(status) {
-            case 'APPROVED': return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>;
-            case 'PENDING_PATIENT': return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending (Patient)</span>;
-            case 'EN_ATTENTE': return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">En Attente</span>;
-            case 'REJECTED': return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>;
+            case 'APPROVED': return <span className="px-2.5 py-0.5 inline-flex text-[10px] uppercase tracking-wider font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Approved</span>;
+            case 'PENDING_PATIENT': return <span className="px-2.5 py-0.5 inline-flex text-[10px] uppercase tracking-wider font-bold rounded-full bg-blue-50 text-blue-600 border border-blue-100">Pending</span>;
+            case 'EN_ATTENTE': return <span className="px-2.5 py-0.5 inline-flex text-[10px] uppercase tracking-wider font-bold rounded-full bg-amber-50 text-amber-600 border border-amber-100">En Attente</span>;
+            case 'REJECTED': return <span className="px-2.5 py-0.5 inline-flex text-[10px] uppercase tracking-wider font-bold rounded-full bg-rose-50 text-rose-600 border border-rose-100">Rejected</span>;
             default: return null;
         }
     };
@@ -100,23 +100,21 @@ const Appointments = () => {
         <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-6">Appointments</h1>
             
-            <div className="bg-white border-b border-gray-200 mb-6 rounded-t-lg">
-                <nav className="-mb-px flex space-x-8 px-6 overflow-x-auto" aria-label="Tabs">
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`
-                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors
-                                ${activeTab === tab.id 
-                                    ? 'border-medical-blue text-medical-blue' 
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
-                            `}
-                        >
-                            {tab.label}
-                        </button>
-                    ))}
-                </nav>
+            <div className="bg-white border border-slate-100 p-1.5 mb-6 rounded-2xl flex space-x-1 max-w-fit shadow-sm shadow-slate-100/50 overflow-x-auto">
+                {tabs.map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`
+                            whitespace-nowrap px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer
+                            ${activeTab === tab.id 
+                                ? 'bg-medical-blue text-white shadow-sm shadow-sky-100' 
+                                : 'text-slate-500 hover:text-slate-950 hover:bg-slate-50'}
+                        `}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
             </div>
 
             {filteredAppointments.length === 0 ? (
@@ -128,31 +126,31 @@ const Appointments = () => {
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {filteredAppointments.map(apt => (
-                        <div key={apt.id} className="bg-white rounded-lg shadow-sm p-6 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between hover:shadow-md transition-shadow">
+                        <div key={apt.id} className="bg-white rounded-2xl shadow-sm shadow-slate-100/50 p-6 border border-slate-100 flex flex-col md:flex-row md:items-center justify-between hover:shadow-md hover:shadow-slate-100/35 transition-all duration-200">
                             <div className="flex flex-col md:flex-row md:items-center">
-                                <div className="mb-4 md:mb-0 md:mr-8 flex-shrink-0 bg-slate-50 p-4 rounded-lg text-center min-w-[120px]">
-                                    <div className="text-sm font-semibold text-medical-blue mb-1">
-                                        <Calendar className="inline h-4 w-4 mr-1 mb-0.5" />
+                                <div className="mb-4 md:mb-0 md:mr-8 flex-shrink-0 bg-slate-50/50 border border-slate-100/60 p-4 rounded-2xl text-center min-w-[125px]">
+                                    <div className="text-xs font-bold text-medical-blue mb-1 flex items-center justify-center">
+                                        <Calendar className="h-3.5 w-3.5 mr-1" />
                                         {new Date(apt.appointment_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                     </div>
-                                    <div className="text-sm text-gray-600 font-medium">
-                                        <Clock className="inline h-3.5 w-3.5 mr-1 mb-0.5" />
+                                    <div className="text-xs text-slate-500 font-bold flex items-center justify-center mt-1.5">
+                                        <Clock className="h-3.5 w-3.5 mr-1" />
                                         {apt.appointment_time.substring(0, 5)}
                                     </div>
                                 </div>
                                 
-                                <div className="md:pl-4">
-                                    <div className="flex items-center text-lg">
-                                        <UserIcon className="h-5 w-5 text-gray-400 mr-2" />
-                                        <span className="font-semibold text-gray-900">
+                                <div className="md:pl-2">
+                                    <div className="flex items-center text-base font-bold text-slate-800">
+                                        <UserIcon className="h-4.5 w-4.5 text-slate-400 mr-2 shrink-0" />
+                                        <span>
                                             {user.role === 'PATIENT' 
                                                 ? (apt.doctor_details?.full_name || `Dr. ${apt.doctor_details?.user?.first_name || ''} ${apt.doctor_details?.user?.last_name || 'Unknown'}`) 
                                                 : `${apt.patient_nom || ''} ${apt.patient_prenom || ''} (Doctor: ${apt.doctor_details?.full_name || `Dr. ${apt.doctor_details?.user?.first_name || ''} ${apt.doctor_details?.user?.last_name || 'Unknown'}`})`}
                                         </span>
                                     </div>
                                     {apt.reason && (
-                                        <div className="text-sm text-gray-600 mt-2 line-clamp-2 bg-slate-50 p-2 rounded border border-slate-100 inline-block">
-                                            <span className="font-medium">Reason: </span> {apt.reason}
+                                        <div className="text-xs text-slate-500 mt-2.5 bg-slate-50/60 p-2.5 rounded-xl border border-slate-100/80 inline-block font-medium">
+                                            <span className="font-bold text-slate-700">Reason: </span> {apt.reason}
                                         </div>
                                     )}
                                 </div>
