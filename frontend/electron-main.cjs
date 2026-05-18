@@ -31,8 +31,9 @@ function createWindow() {
     // Open Developer Tools automatically in development
     mainWindow.webContents.openDevTools();
   } else {
-    // Load compiled production React index file
-    mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+    // Load compiled production React index file (works in packaged mode)
+    const indexPath = path.join(__dirname, 'dist', 'index.html');
+    mainWindow.loadFile(indexPath);
   }
 
   // Fade-in effect: only show once rendering is completed
